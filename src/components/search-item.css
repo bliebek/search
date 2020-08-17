@@ -1,0 +1,22 @@
+.c-search-item__field {
+    display: flex;
+    padding: 3px 6px;
+}
+
+.c-search-item__field--label {
+    font-weight: 500;
+    width: 100px;
+}
+
+.c-search-item__field--value {
+    width: calc(100% - 100px);
+}
+
+.c-search-item__field--highlight {
+    border-bottom: solid 1px #e2e4e9;
+}
+
+.c-search-item__field--value .highlight {
+    background: #f6f6d5;
+    font-weight: 500;
+}
