@@ -1,0 +1,42 @@
+.c-search-list {
+    margin: 24px auto;
+    max-width: 900px;
+    width: 90%;
+}
+
+.c-search-list.ant-card {
+    background: none;
+}
+
+.c-search-list .ant-card-head {
+    border-bottom: solid 1px #a0a0a0;
+    padding: 0;
+}
+
+.c-search-list .ant-card-body {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.c-search-list__list {
+    list-style-position: outside;
+    list-style-type: none;
+    padding: 0;
+}
+
+.c-search-list--table .c-search-list__list {
+    margin: 0;
+}
+
+.c-search-list__item {
+    background: rgba(255,255,255,0.6);
+    border: solid 1px #a0a0a0;
+    border-radius: 4px;
+    overflow: hidden;
+    padding: 12px;
+    transition: all;
+}
+
+.c-search-list--table .c-search-list__item {
+    margin: 0 0 12px 0;
+}
