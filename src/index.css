@@ -1,8 +1,9 @@
 @import '~antd/dist/antd.css';
-/*@import '~antd/dist/antd.dark.less';*/
-/*@import '~antd/dist/antd.compact.less';*/
+/*@import '~antd/dist/antd.dark.css';*/
+/*@import '~antd/dist/antd.compact.css';*/
 
 body {
+  background: #f1f7fd;
   margin: 0;
   padding: 0;
 }
