@@ -37,12 +37,18 @@ const parseSearch = search => {
 };
 
 export default ({ onChange }) => {
+  const displayedInfo = localStorage.getItem('displayedInfo');
   const [ form ] = Form.useForm();
   const [ searchFields, setSearchFields ] = useState([]);
-  const [ popoverVisible, setPopoverVisible ] = useState(<infos.input />);
+  const [ popoverVisible, setPopoverVisible ] = useState(displayedInfo === 'tag' ? false : (displayedInfo === 'info' ? false : <infos.input />));
   const inputRef = useRef();
 
-  const onInputChange = () => setPopoverVisible(false);
+  const onInputChange = () => {
+    setPopoverVisible(false);
+    if (!displayedInfo) {
+        localStorage.setItem('displayedInfo', 'info');
+    }
+  }
 
   const onFormSubmit = ({ search }) => {
     const field = parseSearch(search);
@@ -64,10 +70,15 @@ export default ({ onChange }) => {
 
   const removeField = field => {
     const newState = searchFields.filter(r => r.field !== field);
-    setPopoverVisible(<infos.tag fieldName={field} />);
+    setPopoverVisible(displayedInfo !== 'tag' ? <infos.tag fieldName={field} /> : false);
+    if (displayedInfo !== 'tag') {
+        localStorage.setItem('displayedInfo', 'tag');
+    }
     setSearchFields(newState);
     onChange(newState);
   };
+
+  console.log('DI', displayedInfo);
 
   return (<div className={'c-search-form'}>
     <Form
