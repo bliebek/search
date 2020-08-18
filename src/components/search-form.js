@@ -18,9 +18,8 @@ const allowedFields = [
 ];
 
 const infos = {
-'input': () =>
-<span>Type eg.: <strong>email:.org</strong></span>,
-    'tag': ({fieldName}) => (<span>
+  'input': () => <span>Type eg.: <strong>email:.org</strong></span>,
+  'tag': ({fieldName}) => (<span>
                       Type <strong>-{fieldName}</strong> to remove field from search.
                         You don't need to remove field change it's value. Simply type <strong>{fieldName}: newValue</strong> to override it.
                     </span>)
@@ -36,18 +35,53 @@ const parseSearch = search => {
   return null;
 };
 
+const canDisplayPopover = type => {
+    const displayedInfo = localStorage.getItem('displayedInfo');
+
+    if (!displayedInfo) {
+      return true;
+    }
+
+    if (displayedInfo === type) {
+      return false;
+    }
+
+    if (type === 'tag') {
+      return true;
+    }
+};
+
+const savePopover = type => {
+    const displayedInfo = localStorage.getItem('displayedInfo');
+
+    if (type === 'info' && !displayedInfo) {
+      localStorage.setItem('displayedInfo', type);
+    }
+
+    if (type === 'tag' && displayedInfo !== 'tag') {
+      localStorage.setItem('displayedInfo', type);
+    }
+}
+
 export default ({ onChange }) => {
-  const displayedInfo = localStorage.getItem('displayedInfo');
+
   const [ form ] = Form.useForm();
   const [ searchFields, setSearchFields ] = useState([]);
-  const [ popoverVisible, setPopoverVisible ] = useState(displayedInfo === 'tag' ? false : (displayedInfo === 'info' ? false : <infos.input />));
+  const [ popoverVisible, setPopoverVisible ] = useState(canDisplayPopover('info') ? <infos.input /> : false);
   const inputRef = useRef();
 
-  const onInputChange = () => {
+  const hidePopover = type => {
     setPopoverVisible(false);
-    if (!displayedInfo) {
-        localStorage.setItem('displayedInfo', 'info');
-    }
+    savePopover(type);
+  };
+
+  const onFieldsChange = state => {
+    setSearchFields(state);
+    onChange(state);
+  }
+
+  const onInputChange = () => {
+      hidePopover('info');
   }
 
   const onFormSubmit = ({ search }) => {
@@ -63,22 +97,14 @@ export default ({ onChange }) => {
   };
 
   const addField = field => {
-    const newState = searchFields.filter(r => r.field !== field.field).concat([field]);
-    setSearchFields(newState);
-    onChange(newState);
+    onFieldsChange(searchFields.filter(r => r.field !== field.field).concat([field]));
   };
 
   const removeField = field => {
-    const newState = searchFields.filter(r => r.field !== field);
-    setPopoverVisible(displayedInfo !== 'tag' ? <infos.tag fieldName={field} /> : false);
-    if (displayedInfo !== 'tag') {
-        localStorage.setItem('displayedInfo', 'tag');
-    }
-    setSearchFields(newState);
-    onChange(newState);
+    setPopoverVisible(canDisplayPopover('tag') ? <infos.tag fieldName={field} /> : false);
+    savePopover('tag');
+    onFieldsChange(searchFields.filter(r => r.field !== field));
   };
-
-  console.log('DI', displayedInfo);
 
   return (<div className={'c-search-form'}>
     <Form
@@ -102,6 +128,12 @@ export default ({ onChange }) => {
         </Popover>
     </Form>
       <div className={'c-search-form__fields'}>
-          {searchFields.map((field, i) => <Tag color={'blue'} key={`${field.field}-${i}`} closable onClose={() => removeField(field.field)}>{field.field} : {field.value}</Tag>)}
+          {searchFields.map((field, i) => <Tag
+                                            color={'blue'}
+                                            key={`${field.field}-${i}`}
+                                            closable
+                                            onClose={() => removeField(field.field)}>
+                                              {field.field} : {field.value}
+                                          </Tag>)}
       </div></div>);
 }
